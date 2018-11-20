@@ -1,0 +1,139 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>z</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+
+  <script>
+    function Z () {
+      var store;
+      var rootRender;
+
+      function el (tag, attributes, textFn) {
+        var el = document.createElement(tag);
+        if (attributes) {
+          Object.keys(attributes).forEach(function (attribute) {
+            el[attribute] = attributes[attribute];
+          });
+        }
+        var result = textFn ? textFn(store.getState()) : '';
+        if (typeof result === 'string') {
+          el.innerHTML = result;
+        } else {
+          build(result, el, store)();
+        }
+        return el;
+      }
+
+      function tree (input, store) {
+        if (typeof input === 'function') {
+          return input({}, store);
+        } else if (input instanceof Array) {
+          return input.reduce(function (current, next) {
+            current.append(tree(next, store))
+            return current;
+          }, document.createDocumentFragment());
+        } else {
+          return input;
+        }
+      }
+
+      function build (app, node, store) {
+        return function () {
+          node.innerHTML = '';
+          node.append(tree(app, store));
+        };
+      }
+
+      function render (app, node, createdStore) {
+        store = createdStore;
+        rootRender = build(app, node, store);
+        rootRender();
+      }
+
+      function makeStore (initial) {
+        var state = initial || {};
+
+        function dispatch (key, value) {
+          state[key] = value;
+          console.log(state);
+          rootRender();
+        }
+
+        function getState () {
+          return state;
+        }
+
+        return {
+          dispatch: dispatch,
+          getState: getState,
+        };
+      }
+
+      return {
+        el: el,
+        makeStore: makeStore,
+        render: render,
+        tree: tree,
+      };
+    }
+
+    var z = new Z();
+
+    function counter (props, store) {
+      function handleclick () {
+        console.log('counter click');
+        store.dispatch('count', store.getState().count * 10);
+      }
+      return z.el('span', {
+        style: 'background: red;',
+        onclick: handleclick,
+      }, function (state) { return 'counter: ' + state.count });
+    }
+
+    function header (props, store) {
+      function handleclick () {
+        console.log('header click');
+        store.dispatch('count', store.getState().count + 1);
+      }
+      return z.el('div', {
+        onclick: handleclick,
+      }, function (state) { return ['hello', counter({}, store)]; });
+    }
+
+    function content (props, store) {
+      return z.el('div', {}, function () {
+        function onkeyup (e) {
+          console.log(e.target.value);
+          store.dispatch('input', e.target.value);
+          return true;
+        }
+        return [
+          'content:',
+          z.el('input', {
+            value: store.getState().input,
+            style: 'border: 1px solid green',
+            onkeyup: onkeyup,
+          }),
+        ];
+      });
+    }
+
+    function footer () {
+      return z.el('div', {}, function (state) { return 'footer ' + state.count });
+    }
+
+    var app = [
+      header,
+      content,
+      footer,
+    ];
+
+    var store = z.makeStore({ count: 1, input: '' });
+
+    z.render(app, document.getElementById('root'), store);
+  </script>
+</html>
