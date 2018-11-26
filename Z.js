@@ -62,7 +62,6 @@ function Z () {
 
     function dispatch (key, value) {
       state[key] = value;
-      console.log(state);
       rootRender();
       // this is somewhat hacky
       if (activeElement) {
