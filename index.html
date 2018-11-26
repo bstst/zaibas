@@ -27,7 +27,11 @@
         store.dispatch('count', store.getState().count * 10);
       }
       return z.createEl('span', {
-        style: 'background: red;',
+        style: {
+          background: store.getState().count % 2 ? 'blue' : 'green',
+          padding: 5,
+          color: '#fff',
+        },
         onclick: handleclick,
       }, function (state) { return 'counter: ' + state.count });
     }
@@ -40,7 +44,9 @@
       }
       return z.createEl('input', {
         value: store.getState().input,
-        style: 'border: 1px solid green',
+        style: {
+          border: '1px solid green',
+        },
         oninput: oninput,
       });
     }

@@ -39,7 +39,11 @@ function Z () {
     const el = document.createElement(tag);
     if (attributes) {
       Object.keys(attributes).forEach((attribute) => {
-        el[attribute] = attributes[attribute];
+        let computedAttribute = attributes[attribute];
+        if (attribute === 'style') {
+          computedAttribute = Object.keys(computedAttribute).map(key => `${key}:${computedAttribute[key]};`).join('');
+        }
+        el[attribute] = computedAttribute;
       });
     }
     const result = textFn ? textFn(store.getState()) : '';
