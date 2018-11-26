@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 function Z () {
   let store;
-  let rootRender;
+  const rootRender = [];
   let activeElement;
 
   function tree (input, node) {
@@ -51,10 +51,14 @@ function Z () {
     return el;
   }
 
+  function renderAll() {
+    rootRender.map(fragment => fragment());
+  }
+
   function render (app, node, createdStore) {
     store = createdStore;
-    rootRender = build(app, node, store);
-    rootRender();
+    rootRender.push(build(app, node, store));
+    renderAll();
   }
 
   function makeStore (initial) {
@@ -62,7 +66,7 @@ function Z () {
 
     function dispatch (key, value) {
       state[key] = value;
-      rootRender();
+      renderAll();
       // this is somewhat hacky
       if (activeElement) {
         activeElement.focus();

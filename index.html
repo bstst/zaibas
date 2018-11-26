@@ -11,7 +11,10 @@
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="app1"></div>
+    <div id="app2"></div>
+    <div id="app3"></div>
+    <div id="app4"></div>
     <script src="Z.js"></script>
   </body>
 
@@ -65,27 +68,30 @@
       return z.createEl('div', {}, function (state) { return 'footer ' + state.count + state.input });
     }
 
-    var app = [
+    var app1 = [
       header,
       content,
       footer,
     ];
 
-    // var app = [
-    //   function () { return z.createEl('div', {}, function () { return 'hello' }); },
-    // ];
+    var app2 = [
+      function () { return z.createEl('div', {}, function () { return 'hello' }); },
+    ];
 
-    // var app = [
-    //   counter,
-    // ];
+    var app3 = [
+      counter,
+    ];
 
-    // var app = [
-    //   (props, store) => z.createEl('div', {}, (state) => `mmm ${state.input}`),
-    //   input,
-    // ];
+    var app4 = [
+      (props, store) => z.createEl('div', {}, (state) => `mmm ${state.input}`),
+      (props, store) => z.createEl('div', {}, (state) => [`mmm ${state.input}`, input]),
+    ];
 
     var store = z.makeStore({ count: 1, input: '' });
 
-    z.render(app, document.getElementById('root'), store);
+    z.render(app1, document.getElementById('app1'), store);
+    z.render(app2, document.getElementById('app2'), store);
+    z.render(app3, document.getElementById('app3'), store);
+    z.render(app4, document.getElementById('app4'), store);
   </script>
 </html>
