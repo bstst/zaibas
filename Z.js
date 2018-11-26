@@ -57,6 +57,11 @@ function Z () {
 
   function renderAll() {
     rootRender.map(fragment => fragment());
+    // this is somewhat hacky
+    if (activeElement) {
+      activeElement.focus();
+      activeElement = null;
+    }
   }
 
   function render (app, node, createdStore) {
@@ -71,11 +76,6 @@ function Z () {
     function dispatch (key, value) {
       state[key] = value;
       renderAll();
-      // this is somewhat hacky
-      if (activeElement) {
-        activeElement.focus();
-        activeElement = null;
-      }
     }
 
     function getState () {
