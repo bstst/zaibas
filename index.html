@@ -91,6 +91,7 @@
     var app4 = [
       (props, store) => z.createEl('div', {}, (state) => `mmm ${state.input}`),
       (props, store) => z.createEl('div', {}, (state) => [`mmm ${state.input}`, input]),
+      (props, store) => z.createEl('div', {}, (state) => [z.createEl('input', { type: 'checkbox' })]),
     ];
 
     var store = z.makeStore({ count: 1, input: '' });
